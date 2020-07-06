@@ -52,19 +52,24 @@ After saving and closing the UDEV rule, Reload UDEV
 
 modes:
 
-1: 49-way (default) 
-2: Progressive 49 
-3: 8-Way 
-4: 4-Way 
-5: 4-Way Diagonal 
-6: 2-Way Horizontal 
-7: 2-Way Vertical 
-8: 16-Way / Large dead zone in center 
+| Value         | Mode                  |
+| -------------:|-------------          |
+| 1             | 49-way (default)      |
+| 2             | Progressive 49-way    | 
+| 3             | 8-Way                 |
+| 4             | 4-Way                 |
+| 5             | 4-Way Diagonal        |
+| 6             | 2-Way Horizontal      |
+| 7             | 2-Way Vertical        |
+| 8             | 16-Way                |
 
 joystick types:
 
-0: Happs (default doesn't need to be passed in) 
-1: Williams
+| Value         | Mode                  |
+| -------------:|-------------          |
+| 0             | Happs (default)       |
+| 1             | Williams              | 
+
 
 examples
         
