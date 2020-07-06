@@ -19,7 +19,7 @@ This software is to set the joystick mode for the GPWiz49 Joystick from GroovyGa
 This script will not work on the other GGG 49way encoders, just the GPWiz49,
 though it should be easy to change the product ID if you need to access a different version of this encoder
 
-=====================================
+************************************************
 
 Note: To use the GGG GPWiz49 on a Raspberry Pi, you will need to set some HID quirks 
 1. Create/edite file /etc/modprobe.d/usbhid.conf and add the following:
@@ -44,13 +44,14 @@ After saving and closing the UDEV rule, Reload UDEV
 
         sudo udevadm control --reload
 
-====================================
+**************************************************
 
 # Usage
 
         set49mode <joystick-mode> <joystick-type>
 
 modes:
+
 1: 49-way (default)
 2: Progressive 49
 3: 8-Way
@@ -61,6 +62,7 @@ modes:
 8: 16-Way / Large dead zone in center
 
 joystick types:
+
 0: Happs (default doesn't need to be passed in)
 1: Williams
 
