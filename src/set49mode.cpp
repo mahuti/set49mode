@@ -184,7 +184,7 @@ int main(int argc, char *argv[]) {
         << "===================================="
         << "\n"
         << "Usage"
-        << "set49mode <joystick-mode> <joystick-type>
+        << "set49mode <joystick-mode> <joystick-type>"
         << "modes:"
         << "1: 49-way (default)"
         << "2: Progressive 49"
