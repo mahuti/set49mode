@@ -1,4 +1,4 @@
-set49mode is a command line utility to set the status of the [GP-Wiz49 Joystick Interface](https://groovygamegear.com/webstore/index.php?main_page=product_info&cPath=76_81&products_id=233)
+Set49mode is a command line utility to set the status of the [GP-Wiz49 Joystick Interface](https://groovygamegear.com/webstore/index.php?main_page=product_info&cPath=76_81&products_id=233)
 
 # Dependencies:
 - libusb-1.0
@@ -16,14 +16,13 @@ set49mode is a command line utility to set the status of the [GP-Wiz49 Joystick 
 # About: 
 
 This software is to set the joystick mode for the GPWiz49 Joystick from GroovyGameGear. 
-https://groovygamegear.com/webstore/index.php?main_page=product_info&cPath=76_81&products_id=233
 This script will not work on the other GGG 49way encoders, just the GPWiz49,
-though it should be easy to change the product ID to support other encoders
+though it should be easy to change the product ID if you need to access a different version of this encoder
 
 =====================================
 
-Note: To use the GGG GPWiz49 on a Raspberry Pi, you will need to set some HID quirks. 
-1. Create file /etc/modprobe.d/usbhid.conf with the following:
+Note: To use the GGG GPWiz49 on a Raspberry Pi, you will need to set some HID quirks 
+1. Create/edite file /etc/modprobe.d/usbhid.conf and add the following:
  
         options usbhid quirks=0xFAFA:0x0007:0x00000020,0xFAFA:0x0008:0x00000020
 
@@ -31,7 +30,7 @@ Note: To use the GGG GPWiz49 on a Raspberry Pi, you will need to set some HID qu
 
         usbhid.quirks=0xFAFA:0x0007:0x00000020,0xFAFA:0x0008:0x00000020
 
-If you want to use one of the other GGG products, you will need to change the existing product id: 0x0007
+If you want to use one of the other GGG products, you will need to change the product id. GPWiz49 has a product code of 0x0007, other versions may differ.
 
 3. You will also need to add a UDEV rule so that this app can be run without ROOT privileges
         
@@ -39,7 +38,7 @@ If you want to use one of the other GGG products, you will need to change the ex
 
 Add this:
 
-        ACTION=='add', SUBSYSTEMS=='usb', ATTRS{idVendor}=='fafa', ATTRS{idProduct}=='00ff', MODE:='666' 
+        ACTION=='add', SUBSYSTEMS=='usb', ATTRS{idVendor}=='fafa', ATTRS{idProduct}=='0007', MODE:='666' 
 
 After saving and closing the UDEV rule, Reload UDEV
 
