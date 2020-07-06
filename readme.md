@@ -22,7 +22,7 @@ though it should be easy to change the product ID if you need to access a differ
 ************************************************
 
 Note: To use the GGG GPWiz49 on a Raspberry Pi, you will need to set some HID quirks 
-1. Create/edite file /etc/modprobe.d/usbhid.conf and add the following:
+1. Create/edit file /etc/modprobe.d/usbhid.conf and add the following:
  
         options usbhid quirks=0xFAFA:0x0007:0x00000020,0xFAFA:0x0008:0x00000020
 
