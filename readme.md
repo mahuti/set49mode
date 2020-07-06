@@ -34,7 +34,7 @@ If you want to use one of the other GGG products, you will need to change the pr
 
 3. You will also need to add a UDEV rule so that this app can be run without ROOT privileges
         
-        sudo pico :/etc/udev/rules.d/50-set49mode.rules 
+        sudo pico /etc/udev/rules.d/50-set49mode.rules 
 
 Add this:
 
