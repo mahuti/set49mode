@@ -32,15 +32,8 @@ Note: To use the GGG GPWiz49 on a Raspberry Pi, you will need to set some HID qu
 
 If you want to use one of the other GGG products, you will need to change the product id. GPWiz49 has a product code of 0x0007, other versions may differ.
 
-3. You will also need to add a UDEV rule so that this app can be run without ROOT privileges
-        
-        sudo pico /etc/udev/rules.d/50-set49mode.rules 
-
-Add this:
-
-        ACTION=='add', SUBSYSTEMS=='usb', ATTRS{idVendor}=='fafa', ATTRS{idProduct}=='0007', MODE:='666' 
-
-After saving and closing the UDEV rule, Reload UDEV
+3. Add a the included UDEV rule file to the `/etc/udev/rules.d` folder so that this app can be run without ROOT privileges
+After adding that UDEV rule, Reload UDEV
 
         sudo udevadm control --reload
 

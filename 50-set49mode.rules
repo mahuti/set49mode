@@ -1,0 +1,1 @@
+ACTION=='add', SUBSYSTEMS=='usb', ATTRS{idVendor}=='fafa', ATTRS{idProduct}=='0007', MODE:='666' 
