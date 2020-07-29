@@ -1,7 +1,7 @@
 /*
     set49mode sets the mode of Groovy Game Gear's 49-way Joystick. 
     
-    This script is based off of De Waegeneer Gijsbrecht's 2018 SetUltrastik360 script (gijsbrecht.dewaegeneer@telenet.be)
+    This script is based off of De Waegeneer Gijsbrecht's 2018 SetUltrastik360 script   
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
     contact: mahuti@gmail.com
  */
-
+ 
 #include <chrono>
 #include <cstring>
 #include <iostream>
@@ -25,12 +25,12 @@
 #include <sstream>
 #include <thread>
 #include <vector>
+#include <algorithm>
 
 #define UM_REQUEST_TYPE 0x21
 #define UM_REQUEST 9
 #define UM_TIMEOUT 2000
 #define J_VENDOR_ID 0xFAFA
-#define J_PRODUCT_ID 0x0007
 #define J_REPORT 0x0200
 #define J_MESG_LENGTH 2
 #define J_INTERFACE 0
@@ -59,7 +59,7 @@ void cleanup(libusb_context * context, libusb_device_handle * devicehandle  ) {
    exit(EXIT_FAILURE);
 }
 
-auto apply49mode(long int modeId) {
+auto apply49mode(long int modeId, unsigned char product_id) {
    libusb_context *       context(nullptr);
    libusb_device *        device(nullptr);
    libusb_device_handle * devicehandle(nullptr);
@@ -74,6 +74,7 @@ auto apply49mode(long int modeId) {
 #else
    libusb_set_debug(context, LIBUSB_LOG_LEVEL_WARNING);
 #endif
+    
    auto deviceCount = libusb_get_device_list(context, &devices);
    
      for (auto deviceIndex(0); deviceIndex < deviceCount; deviceIndex++) {
@@ -84,7 +85,7 @@ auto apply49mode(long int modeId) {
          std::cout << "WARNING: " << libusb_error_name(rc) << " - " << libusb_strerror(static_cast<libusb_error>(rc))
                    << " - trying to proceed...\n";
       } else {
-         if ((descriptor.idVendor == J_VENDOR_ID) && (descriptor.idProduct == J_PRODUCT_ID)) {
+         if ((descriptor.idVendor == J_VENDOR_ID) && (descriptor.idProduct == product_id)) {
             break;
          }
       }
@@ -93,7 +94,7 @@ auto apply49mode(long int modeId) {
   
    if (device == nullptr) {
       std::stringstream ss;
-      ss << std::hex << "0x" << J_VENDOR_ID << ":0x" << std::hex << J_PRODUCT_ID << " device not found";
+      ss << std::hex << "GP-Wiz49 device not found";
       errorhandler(context, devicehandle, ss.str());
    } else {   // good to go
       rc = libusb_open(device, &devicehandle);
@@ -110,10 +111,9 @@ auto apply49mode(long int modeId) {
                errorhandler(context, devicehandle, rc);
             }
          }
-         
-         
- 
-         unsigned char message[J_MESG_LENGTH] = { 204, modeId };   // 49-way
+        
+        unsigned char mid = '0' + modeId; // converting it so compiler doesn't complain. 
+        unsigned char message[J_MESG_LENGTH] = { 204, mid };    
 
         rc = libusb_control_transfer(devicehandle,
                                       UM_REQUEST_TYPE,
@@ -216,5 +216,11 @@ int main(int argc, char *argv[]) {
   {
       modeId+=10; 
   }
-  return apply49mode(modeId);
+    unsigned char product_ids[4]{0x0007, 0x0008, 0x0009, 0x000a};
+    int prod_array_count = sizeof(product_ids)/sizeof(product_ids[0]);
+    
+    for (auto prodindex(0); prodindex < prod_array_count; prodindex++) {
+        apply49mode(modeId, product_ids[prodindex]);
+    }
+  return 0; 
 }
