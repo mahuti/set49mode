@@ -1,6 +1,7 @@
 /*
     set49mode sets the mode of Groovy Game Gear's 49-way Joystick. 
     
+    This script is based off of De Waegeneer Gijsbrecht's 2018 SetUltrastik360 script
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
