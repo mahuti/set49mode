@@ -7,8 +7,7 @@ Set49mode is a command line utility to set the status of the [GP-Wiz49 Joystick 
 # Compilation:
 
     cd 'folder you extracted the archive to'
-    mkdir -p builds/unix
-    cd builds/unix
+    cd build/unix
     cmake ../..
     make
     sudo make install

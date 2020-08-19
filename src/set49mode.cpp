@@ -1,7 +1,6 @@
 /*
     set49mode sets the mode of Groovy Game Gear's 49-way Joystick. 
     
-    This script is based off of De Waegeneer Gijsbrecht's 2018 SetUltrastik360 script   
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,7 +16,7 @@
 
     contact: mahuti@gmail.com
  */
- 
+
 #include <chrono>
 #include <cstring>
 #include <iostream>
@@ -59,7 +58,7 @@ void cleanup(libusb_context * context, libusb_device_handle * devicehandle  ) {
    exit(EXIT_FAILURE);
 }
 
-auto apply49mode(long int modeId, unsigned char product_id) {
+auto apply49mode(unsigned char modeId, unsigned char product_id) {
    libusb_context *       context(nullptr);
    libusb_device *        device(nullptr);
    libusb_device_handle * devicehandle(nullptr);
@@ -74,7 +73,6 @@ auto apply49mode(long int modeId, unsigned char product_id) {
 #else
    libusb_set_debug(context, LIBUSB_LOG_LEVEL_WARNING);
 #endif
-    
    auto deviceCount = libusb_get_device_list(context, &devices);
    
      for (auto deviceIndex(0); deviceIndex < deviceCount; deviceIndex++) {
@@ -93,9 +91,11 @@ auto apply49mode(long int modeId, unsigned char product_id) {
    }
   
    if (device == nullptr) {
-      std::stringstream ss;
-      ss << std::hex << "GP-Wiz49 device not found";
-      errorhandler(context, devicehandle, ss.str());
+      
+       std::cout << "GPWiz49Way Device id# " << static_cast<unsigned>(product_id) << " not found\n";
+       cleanup(context, devicehandle);
+       return 0; 
+      // errorhandler(context, devicehandle, ss.str());
    } else {   // good to go
       rc = libusb_open(device, &devicehandle);
       if (rc != LIBUSB_SUCCESS) {
@@ -111,9 +111,9 @@ auto apply49mode(long int modeId, unsigned char product_id) {
                errorhandler(context, devicehandle, rc);
             }
          }
-        
-        unsigned char mid = '0' + modeId; // converting it so compiler doesn't complain. 
-        unsigned char message[J_MESG_LENGTH] = { 204, mid };    
+         
+         
+         unsigned char message[J_MESG_LENGTH] = { 204, modeId };  
 
         rc = libusb_control_transfer(devicehandle,
                                       UM_REQUEST_TYPE,
@@ -123,18 +123,18 @@ auto apply49mode(long int modeId, unsigned char product_id) {
                                       message,
                                       J_MESG_LENGTH,
                                       UM_TIMEOUT);
-        // std::cout << "GPWiz49Way " << modeId << "-mode -> " << ((rc == sizeof(message)) ? "SUCCESS" : "FAILURE") << "\n";
+         std::cout << "GPWiz49way Device id# " << static_cast<unsigned>(product_id) << ((rc == sizeof(message)) ? " successfully converted " : " failed to convert ") << "to mode# " << static_cast<unsigned>(modeId) << "\n";
       }
    }
    libusb_release_interface(devicehandle, J_INTERFACE);
    rc = libusb_attach_kernel_driver(devicehandle, J_INTERFACE);
    libusb_free_device_list(devices, 1);
    cleanup(context, devicehandle);
-   return EXIT_SUCCESS;
+   return 0; 
 }
 
 int main(int argc, char *argv[]) {
-  long int modeId(1);
+  unsigned char modeId(1);
   long int joystick(0);
   switch (argc) {
       case 3:
@@ -160,52 +160,52 @@ int main(int argc, char *argv[]) {
   default:
   
   
-    std::cout << "GPWiz49 switcher Version " << VERSION << "\n\n"
-         << "This software is to set the joystick mode for the GPWiz49 Joystick from GroovyGameGear. "
-        << "https://groovygamegear.com/webstore/index.php?main_page=product_info&cPath=76_81&products_id=233"
-        << "This script will not work on the other GGG 49way encoders, just the GPWiz49,"
-        << "though it should be easy to change the product ID to support other encoders"
+   std::cout << "GPWiz49 switcher Version " << VERSION << "\n\n"
+         << "This software is to set the joystick mode for the GPWiz49 Joystick from GroovyGameGear. \n"
+        << "https://groovygamegear.com/webstore/index.php?main_page=product_info&cPath=76_81&products_id=233\n"
+        << "This script will not work on the other GGG 49way encoders, just the GPWiz49,\n"
+        << "though it should be easy to change the product ID to support other encoders\n"
         << "\n"
-        << "====================================="
+        << "=====================================\n"
         << "\n"
-        << "Note: To use the GGG GPWiz49 on a Raspberry Pi, you will need to set some HID quirks." 
-        << "1. Create file /etc/modprobe.d/usbhid.conf with the following:"
-        << "    options usbhid quirks=0xFAFA:0x0007:0x00000020,0xFAFA:0x0008:0x00000020"
-        << "2. Add a hid quirk to the end of boot script: sudo pico /boot/cmdline.txt"
-        << "    usbhid.quirks=0xFAFA:0x0007:0x00000020,0xFAFA:0x0008:0x00000020"
-        << "If you want to use one of the other GGG products, you will need to change the existing product id: 0x0007"
-        << "3. You will also need to add a UDEV rule so that this app can be run without ROOT privileges"
-        << "    sudo pico :/etc/udev/rules.d/50-set49mode.rules" 
-        << "Add this:" 
-        << "    ACTION=='add', SUBSYSTEMS=='usb', ATTRS{idVendor}=='fafa', ATTRS{idProduct}=='00ff', MODE:='666' "
-        << "After saving and closing the UDEV rule, Reload UDEV"
-        << "    sudo udevadm control --reload"
+        << "Note: To use the GGG GPWiz49 on a Raspberry Pi, you will need to set some HID quirks.\n" 
+        << "1. Create file /etc/modprobe.d/usbhid.conf with the following:\n"
+        << "    options usbhid quirks=0xFAFA:0x0007:0x00000020,0xFAFA:0x0008:0x00000020\n"
+        << "2. Add a hid quirk to the end of boot script: sudo pico /boot/cmdline.txt\n"
+        << "    usbhid.quirks=0xFAFA:0x0007:0x00000020,0xFAFA:0x0008:0x00000020\n"
+        << "If you want to use one of the other GGG products, you will need to change the existing product id: 0x0007\n"
+        << "3. You will also need to add a UDEV rule so that this app can be run without ROOT privileges\n"
+        << "    sudo pico :/etc/udev/rules.d/50-set49mode.rules\n" 
+        << "Add this:\n" 
+        << "    ACTION=='add', SUBSYSTEMS=='usb', ATTRS{idVendor}=='fafa', ATTRS{idProduct}=='00ff', MODE:='666' \n"
+        << "After saving and closing the UDEV rule, Reload UDEV\n"
+        << "    sudo udevadm control --reload\n"
         << "\n"
-        << "===================================="
+        << "====================================\n"
         << "\n"
-        << "Usage"
-        << "set49mode <joystick-mode> <joystick-type>"
-        << "modes:"
-        << "1: 49-way (default)"
-        << "2: Progressive 49"
-        << "3: 8-Way"
-        << "4: 4-Way"
-        << "5: 4-Way Diagonal"
-        << "6: 2-Way Horizontal"
-        << "7: 2-Way Vertical"
-        << "8: 16-Way / Large dead zone in center"
+        << "Usage\n"
+        << "set49mode <joystick-mode> <joystick-type>\n"
+        << "modes:\n"
+        << "1: 49-way (default)\n"
+        << "2: Progressive 49\n"
+        << "3: 8-Way\n"
+        << "4: 4-Way\n"
+        << "5: 4-Way Diagonal\n"
+        << "6: 2-Way Horizontal\n"
+        << "7: 2-Way Vertical\n"
+        << "8: 16-Way / Large dead zone in center\n"
         << "\n"
-        << "joystick types:"
-        << "0: Happs (default doesn't need to be passed in)"
-        << "1: Williams"
+        << "joystick types:\n"
+        << "0: Happs (default doesn't need to be passed in)\n"
+        << "1: Williams\n"
         << "\n"
-        << "examples"
-        << "    set49mode 5 1"
-        << "GPWiz49 will switch to 4-Way Diagonal on a Williams stick"
-        << "     set49mode 8"
-        << "Will switch to 16-Way on a Happs stick"
+        << "examples\n"
+        << "    set49mode 5 1\n"
+        << "GPWiz49 will switch to 4-Way Diagonal on a Williams stick\n"
+        << "     set49mode 8\n"
+        << "Will switch to 16-Way on a Happs stick\n"
         << "\n"
-        << "===================================="
+        << "====================================\n"
         << "\n"
         << "This program comes with ABSOLUTELY NO WARRANTY. This is free software,\nand you are welcome to redistribute it under certain conditions.\n"
         << "license: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007\nCopyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>\n";
@@ -216,11 +216,11 @@ int main(int argc, char *argv[]) {
   {
       modeId+=10; 
   }
-    unsigned char product_ids[4]{0x0007, 0x0008, 0x0009, 0x000a};
-    int prod_array_count = sizeof(product_ids)/sizeof(product_ids[0]);
-    
-    for (auto prodindex(0); prodindex < prod_array_count; prodindex++) {
-        apply49mode(modeId, product_ids[prodindex]);
-    }
-  return 0; 
+  
+   apply49mode(modeId, 0x0007);
+   apply49mode(modeId, 0x0008);
+   apply49mode(modeId, 0x0009);
+   apply49mode(modeId, 0x000a);
+
+  return EXIT_SUCCESS;
 }
